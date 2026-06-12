@@ -16,7 +16,22 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true
-        }
+        },
+
+        skills: [String],
+
+        education: String,
+
+        experience: String,
+
+        resumeUrl: String,
+
+        savedJobs: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Job"
+            }
+        ]
     },
     {
         timestamps: true
