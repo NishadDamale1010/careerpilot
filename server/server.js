@@ -9,6 +9,7 @@ const userRoutes = require('./src/routes/authRoutes');
 const getuserRoutes = require('./src/routes/userRoutes');
 const jobsRoutes = require('./src/routes/jobRoutes');
 const savedJobRoutes = require('./src/routes/savedJobRoutes');
+const applicationRoutes = require('./src/routes/applicationRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use('/api/auth', userRoutes);
 app.use('/api/users', getuserRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/saved-jobs',savedJobRoutes); 
+app.use('/api/application',applicationRoutes);
 app.get('/', (req, res) => {
     res.send('Api is working');
 });
