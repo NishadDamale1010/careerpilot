@@ -5,6 +5,6 @@ const { applyToJob, getApplications, updateApplicationStatus } = require('../con
 
 router.post('/',protect,applyToJob);
 router.get('/',protect,getApplications);
-router.put('/',protect,updateApplicationStatus);
+router.put('/:id',protect,updateApplicationStatus);
 
 module.exports=router;

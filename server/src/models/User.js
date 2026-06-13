@@ -26,6 +26,8 @@ const userSchema = new mongoose.Schema(
 
         resumeUrl: String,
 
+        resumeText: String,
+
         savedJobs: [
             {
                 type: mongoose.Schema.Types.ObjectId,

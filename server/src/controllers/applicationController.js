@@ -1,7 +1,24 @@
 const Application = require('../models/Application');
+const Job = require('../models/Job');
+const mongoose = require('mongoose');
+
 const applyToJob = async (req, res) => {
     try {
         const { jobId } = req.body;
+
+        if (!jobId || !mongoose.Types.ObjectId.isValid(jobId)) {
+            return res.status(400).json({
+                message: "Valid jobId is required",
+            });
+        }
+
+        const jobExists = await Job.exists({ _id: jobId });
+
+        if (!jobExists) {
+            return res.status(404).json({
+                message: "Job not found",
+            });
+        }
 
         const alreadyApplied =
             await Application.findOne({
@@ -47,6 +64,12 @@ const getApplications = async (req, res) => {
 };
 const updateApplicationStatus = async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Valid application id is required",
+            });
+        }
+
         const application = await Application.findById(
             req.params.id
         );
@@ -72,7 +95,7 @@ const updateApplicationStatus = async (req, res) => {
             "Applied",
             "Interview",
             "Rejected",
-            "Accepted",
+            "Offer",
         ];
 
         if (!allowedStatuses.includes(status)) {
@@ -93,6 +116,7 @@ const updateApplicationStatus = async (req, res) => {
         });
     }
 };
+
 module.exports = {
     applyToJob,
     getApplications,
