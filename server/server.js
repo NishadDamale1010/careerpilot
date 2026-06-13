@@ -12,6 +12,7 @@ const savedJobRoutes = require('./src/routes/savedJobRoutes');
 const applicationRoutes = require('./src/routes/applicationRoutes');
 const resumeRoutes = require('./src/routes/resumeRoutes');
 const matchRoutes = require('./src/routes/matchScoreRoutes');
+const aggregatedJobsRoutes=require('./src/routes/aggregateRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', userRoutes);
 app.use('/api/users', getuserRoutes);
+app.use('/api/jobs/aggregate',aggregatedJobsRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/saved-jobs',savedJobRoutes); 
 app.use('/api/application',applicationRoutes);
