@@ -1,10 +1,13 @@
 const fetchRemotiveJobs = require("./remotiveService");
 const fetchRemoteOkJobs = require("./remoteOkService");
+const fetchWellfoundJobs = require("./wellfoundService");
 
 const aggregateJobs = async () => {
-    const [remotiveJobs, remoteOkJobs] = await Promise.all([
+    const [remotiveJobs, remoteOkJobs,wellfoundJobs,] = await Promise.all([
         fetchRemotiveJobs(),
         fetchRemoteOkJobs(),
+        fetchWellfoundJobs(),
+        
     ]);
 
     const allJobs = [

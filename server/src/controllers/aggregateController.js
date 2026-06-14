@@ -1,8 +1,8 @@
 const aggregateJobs = require("../services/aggregatorService");
-
+const AggregatedJob = require("../models/AggregatedJob");
 const getAggregatedJobs = async (req, res) => {
     try {
-        let jobs = await aggregateJobs();
+        let jobs = await AggregatedJob.find().lean();
 
         const { search, location } = req.query;
 
