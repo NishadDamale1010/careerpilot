@@ -1,6 +1,11 @@
 import { Routes, Route } from "react-router-dom";
+
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import Dashboard from "../pages/Dashboard";
+
+import ProtectedRoute from "../components/ProtectedRoute";
+import DashboardLayout from "../layouts/DashboardLayout";
 
 function AppRoutes() {
     return (
@@ -13,6 +18,17 @@ function AppRoutes() {
             <Route
                 path="/register"
                 element={<Register />}
+            />
+
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <DashboardLayout>
+                            <Dashboard />
+                        </DashboardLayout>
+                    </ProtectedRoute>
+                }
             />
         </Routes>
     );
