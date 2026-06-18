@@ -16,17 +16,11 @@ function Sidebar() {
 
                 <Link to="/jobs">Jobs</Link>
 
-                <Link to="/saved-jobs">
-                    Saved Jobs
-                </Link>
+                <Link to="/saved-jobs">Saved Jobs</Link>
 
-                <Link to="/applications">
-                    Applications
-                </Link>
+                <Link to="/applications">Applications</Link>
 
-                <Link to="/resume">
-                    Resume
-                </Link>
+                <Link to="/resume">Resume</Link>
                 <button
                     onClick={handleLogout}
                     className="mt-5 bg-red-500 p-2 rounded-lg "

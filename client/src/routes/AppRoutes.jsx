@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
-
+import Jobs from "../pages/Jobs";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 
@@ -26,6 +26,16 @@ function AppRoutes() {
                     <ProtectedRoute>
                         <DashboardLayout>
                             <Dashboard />
+                        </DashboardLayout>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/jobs"
+                element={
+                    <ProtectedRoute>
+                        <DashboardLayout>
+                            <Jobs />
                         </DashboardLayout>
                     </ProtectedRoute>
                 }
