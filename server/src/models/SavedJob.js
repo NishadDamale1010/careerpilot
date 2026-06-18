@@ -8,11 +8,11 @@ const savedJobSchema = new mongoose.Schema(
             required: true,
         },
 
-        jobId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Job",
-            required: true,
-        },
+        title: String,
+        company: String,
+        location: String,
+        source: String,
+        applyUrl: String,
     },
     {
         timestamps: true,

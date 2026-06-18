@@ -6,6 +6,7 @@ import Dashboard from "../pages/Dashboard";
 import Jobs from "../pages/Jobs";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
+import SavedJobs from "../pages/SavedJobs";
 
 function AppRoutes() {
     return (
@@ -36,6 +37,16 @@ function AppRoutes() {
                     <ProtectedRoute>
                         <DashboardLayout>
                             <Jobs />
+                        </DashboardLayout>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/saved-jobs"
+                element={
+                    <ProtectedRoute>
+                        <DashboardLayout>
+                            <SavedJobs />
                         </DashboardLayout>
                     </ProtectedRoute>
                 }
