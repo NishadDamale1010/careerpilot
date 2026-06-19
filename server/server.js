@@ -24,7 +24,8 @@ app.use(mongoSanitize());
 const allowedOrigins = [
     process.env.FRONTEND_URL,
     "http://localhost:5173",
-    "https://careerpilot-y6uk.onrender.com" // as provided by user
+    "https://careerpilot-y6uk.onrender.com",
+    "https://careerpilot-rho-black.vercel.app"
 ].filter(Boolean);
 
 app.use(cors({
