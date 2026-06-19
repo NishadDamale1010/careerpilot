@@ -10,6 +10,31 @@ const SORT_OPTIONS = [
     { value: "oldest", label: "Oldest First" },
 ];
 
+const SERVICE_COMPANIES = [
+    "tata consultancy services", "tcs", "infosys", "wipro", "hcl", "hcltech", 
+    "tech mahindra", "cognizant", "capgemini", "accenture", "ltimindtree", 
+    "persistent systems", "oracle", "ibm", "deloitte", "pwc", "ey", "kpmg", 
+    "ntt data", "mphasis", "hexaware", "birlasoft", "coforge"
+];
+
+function sortPriorityCompaniesFirst(jobs, sortBy = "latest") {
+    return [...jobs].sort((a, b) => {
+        const aCompany = (a.company || "").toLowerCase();
+        const bCompany = (b.company || "").toLowerCase();
+        const aIsPriority = SERVICE_COMPANIES.some(c => aCompany.includes(c));
+        const bIsPriority = SERVICE_COMPANIES.some(c => bCompany.includes(c));
+        if (aIsPriority && !bIsPriority) return -1;
+        if (!aIsPriority && bIsPriority) return 1;
+        
+        // Both are priority or both are not - fallback to sortBy
+        const aTime = new Date(a.postedAt || 0).getTime();
+        const bTime = new Date(b.postedAt || 0).getTime();
+        
+        if (sortBy === "oldest") return aTime - bTime;
+        return bTime - aTime;
+    });
+}
+
 function SkeletonCard() {
     return (
         <div className="glass-card p-6 space-y-4">
@@ -51,7 +76,7 @@ export default function Jobs() {
                 if (ignore) return;
 
                 let jobList = data.jobs || [];
-                if (sortBy === "oldest") jobList = [...jobList].reverse();
+                jobList = sortPriorityCompaniesFirst(jobList, sortBy);
 
                 setJobs(jobList);
                 setMeta({ totalJobs: data.totalJobs || 0, totalPages: Math.max(data.totalPages || 1, 1) });
