@@ -21,25 +21,8 @@ app.use(helmet({
 // 2. Prevent NoSQL Injection
 app.use(mongoSanitize());
 
-// 3. CORS Configuration
-// Allow frontend origin from env, or default local/live URLs
-const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    "http://localhost:5173",
-    "https://careerpilot-y6uk.onrender.com",
-    "https://careerpilot-rho-black.vercel.app"
-].filter(Boolean);
-
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: true, // Reflects the incoming origin (allows cross-origin with credentials)
     credentials: true
 }));
 
