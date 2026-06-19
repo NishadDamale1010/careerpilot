@@ -8,6 +8,9 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./src/config/db');
 const startJobRefreshCron = require("./src/jobs/jobRefreshCron");
 
+// Trust the reverse proxy (Render) so rate limiting can read the correct IP
+app.set('trust proxy', 1);
+
 // ── CONNECT DB & CRONS ────────────────────────────────────────────────────────
 connectDB();
 startJobRefreshCron();
