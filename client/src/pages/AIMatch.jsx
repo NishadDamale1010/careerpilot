@@ -1,26 +1,7 @@
 import { useEffect, useState } from "react";
-import { getAggregatedJobs } from "../services/jobService";
+import { getRecommendedJobs } from "../services/resumeService";
 import { getProfile } from "../services/profileService";
 import { getErrorMessage } from "../services/api";
-
-function computeMatch(job, userSkills) {
-    if (!userSkills || userSkills.length === 0) return { score: 0, matched: [], missing: [] };
-
-    const jobText = `${job.title || ""} ${job.type || ""} ${job.description || ""}`.toLowerCase();
-    const knownSkills = [
-        "react","node","javascript","typescript","python","java","mongodb","sql","css","html",
-        "aws","docker","git","graphql","redux","express","tailwind","figma","machine learning",
-        "data analysis","kotlin","swift","flutter","next.js","vue","angular","django","fastapi",
-        "kubernetes","terraform","postgresql","redis","elasticsearch",
-    ];
-    const jobSkills = knownSkills.filter((s) => jobText.includes(s));
-    if (jobSkills.length === 0) return { score: 0, matched: [], missing: [] };
-    const lower = userSkills.map((s) => s.toLowerCase());
-    const matched = jobSkills.filter((s) => lower.some((u) => u.includes(s) || s.includes(u)));
-    const missing = jobSkills.filter((s) => !matched.includes(s));
-    const score = Math.round((matched.length / jobSkills.length) * 100);
-    return { score, matched, missing };
-}
 
 export default function AIMatch() {
     const [jobs, setJobs] = useState([]);
@@ -40,12 +21,8 @@ export default function AIMatch() {
                 const skills = prof.skills || [];
                 setUserSkills(skills);
 
-                const { data } = await getAggregatedJobs({ limit: 50, page: 1 });
-                const raw = data.jobs || [];
-                const matched = raw.map((job) => {
-                    const { score, matched: m, missing } = computeMatch(job, skills);
-                    return { ...job, matchScore: score, matchedSkills: m, missingSkills: missing };
-                }).sort((a, b) => b.matchScore - a.matchScore);
+                const { data } = await getRecommendedJobs();
+                const matched = data.jobs || [];
                 setJobs(matched);
             } catch (e) {
                 setError(getErrorMessage(e, "Failed to load jobs for matching"));
