@@ -13,8 +13,9 @@ const savedJobRoutes = require('./src/routes/savedJobRoutes');
 const applicationRoutes = require('./src/routes/applicationRoutes');
 const resumeRoutes = require('./src/routes/resumeRoutes');
 const matchRoutes = require('./src/routes/matchScoreRoutes');
-const aggregatedJobsRoutes=require('./src/routes/aggregateRoutes');
+const aggregatedJobsRoutes = require('./src/routes/aggregateRoutes');
 const cacheRoutes = require("./src/routes/cacheRoutes");
+const aiRoutes = require('./src/routes/aiRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -22,13 +23,16 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', userRoutes);
 app.use('/api/users', getuserRoutes);
-app.use('/api/jobs/aggregate',aggregatedJobsRoutes);
+app.use('/api/jobs/aggregate', aggregatedJobsRoutes);
+app.use('/api/jobs/saved', savedJobRoutes);
 app.use('/api/jobs', jobsRoutes);
-app.use('/api/saved-jobs',savedJobRoutes); 
-app.use('/api/application',applicationRoutes);
-app.use('/api/resume',resumeRoutes);
-app.use('/api/match',matchRoutes);
+app.use('/api/saved-jobs', savedJobRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/application', applicationRoutes);
+app.use('/api/resume', resumeRoutes);
+app.use('/api/match', matchRoutes);
 app.use("/api/cache", cacheRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get('/', (req, res) => {
     res.send('Api is working');

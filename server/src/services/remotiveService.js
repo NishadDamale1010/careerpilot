@@ -12,8 +12,8 @@ const fetchRemotiveJobs = async () => {
             company: job.company_name,
             location: job.candidate_required_location,
             source: "Remotive",
-            applyLink: job.url,
-            postedDate: job.publication_date,
+            applyUrl: job.url,
+            postedAt: job.publication_date,
             type: job.job_type,
         }));
     } catch (error) {

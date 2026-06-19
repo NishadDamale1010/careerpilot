@@ -5,7 +5,7 @@ module.exports = [
         location: "Remote",
         type: "Internship",
         skills: ["React", "JavaScript"],
-        salary: "₹30,000/month",
+        salary: "INR 30,000/month",
         source: "LinkedIn",
     },
 
@@ -15,7 +15,7 @@ module.exports = [
         location: "Bangalore",
         type: "Internship",
         skills: ["Node.js", "MongoDB"],
-        salary: "₹40,000/month",
+        salary: "INR 40,000/month",
         source: "LinkedIn",
     },
 
@@ -25,7 +25,7 @@ module.exports = [
         location: "Pune",
         type: "Internship",
         skills: ["React", "Node.js", "MongoDB"],
-        salary: "₹20,000/month",
+        salary: "INR 20,000/month",
         source: "Internshala",
     },
 ];

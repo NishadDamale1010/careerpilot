@@ -1,23 +1,25 @@
-import axios from "axios";
+import api from "./api";
 
-const API = axios.create({
-    baseURL: "http://localhost:5000/api",
-});
+export const getAggregatedJobs = (params = {}) =>
+    api.get("/jobs/aggregate", { params });
 
-export const getSavedJobs = (token) =>
-    API.get("/jobs/saved", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
+export const getSavedJobs = () =>
+    api.get("/saved-jobs");
+
+export const saveJob = (job) =>
+    api.post("/saved-jobs", {
+        jobId: job._id,
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        source: job.source,
+        applyUrl: job.applyUrl || job.applyLink,
+        type: job.type,
+        postedAt: job.postedAt || job.postedDate,
     });
 
-export const saveJob = (id, token) =>
-    API.post(
-        `/jobs/${id}/save`,
-        {},
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+export const removeSavedJob = (savedJobId) =>
+    api.delete(`/saved-jobs/${savedJobId}`);
+
+export const getMatchedJobs = (params = {}) =>
+    api.get("/jobs/aggregate", { params: { ...params, limit: 50 } });

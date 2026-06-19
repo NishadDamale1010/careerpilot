@@ -1,6 +1,8 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import heroDashboard from "../assets/landing-dashboard.png";
+import { getErrorMessage } from "../services/api";
 import { registerUser } from "../services/authService";
-import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
     const navigate = useNavigate();
@@ -10,76 +12,129 @@ function Register() {
         email: "",
         password: "",
     });
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
+    const handleChange = (event) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [event.target.name]: event.target.value,
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setError("");
+        setSuccess("");
+        setLoading(true);
 
         try {
             await registerUser(formData);
-
-            alert("Registration Successful");
-
-            navigate("/login");
-        } catch (error) {
-            alert(
-                error.response?.data?.message ||
-                "Registration Failed"
+            setSuccess("Registration successful. Redirecting...");
+            window.setTimeout(() => {
+                navigate("/login", { replace: true });
+            }, 600);
+        } catch (requestError) {
+            setError(
+                getErrorMessage(
+                    requestError,
+                    "Registration failed"
+                )
             );
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex justify-center items-center">
+        <div
+            className="flex min-h-screen items-center justify-center bg-slate-950 bg-cover bg-center px-4 py-10"
+            style={{
+                backgroundImage: `linear-gradient(90deg, rgba(248, 250, 252, 0.96), rgba(248, 250, 252, 0.9)), url(${heroDashboard})`,
+            }}
+        >
             <form
                 onSubmit={handleSubmit}
-                className="w-96 p-6 shadow-lg rounded-lg"
+                className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
             >
-                <h2 className="text-2xl font-bold mb-4">
-                    Register
-                </h2>
+                <Link
+                    to="/"
+                    className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                >
+                    CareerPilot
+                </Link>
 
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Name"
-                    className="w-full border p-2 mb-3"
-                    onChange={handleChange}
-                />
+                <h1 className="mt-4 text-3xl font-bold text-slate-950">
+                    Create Account
+                </h1>
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    className="w-full border p-2 mb-3"
-                    onChange={handleChange}
-                />
+                <p className="mt-2 text-sm text-slate-500">
+                    Set up your CareerPilot workspace.
+                </p>
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    className="w-full border p-2 mb-3"
-                    onChange={handleChange}
-                />
+                {error && (
+                    <div className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+                        {error}
+                    </div>
+                )}
+
+                {success && (
+                    <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                        {success}
+                    </div>
+                )}
+
+                <label className="mt-6 block text-sm font-medium text-slate-700">
+                    Name
+                    <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+
+                <label className="mt-4 block text-sm font-medium text-slate-700">
+                    Email
+                    <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+
+                <label className="mt-4 block text-sm font-medium text-slate-700">
+                    Password
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        minLength={6}
+                        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
 
                 <button
-                    className="w-full bg-black text-white p-2"
+                    type="submit"
+                    disabled={loading}
+                    className="mt-6 w-full rounded-md bg-slate-950 px-4 py-2.5 font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    Register
+                    {loading ? "Creating..." : "Register"}
                 </button>
 
-                <p className="mt-4">
+                <p className="mt-5 text-center text-sm text-slate-600">
                     Already have an account?
                     <Link
                         to="/login"
-                        className="text-blue-500 ml-2"
+                        className="ml-2 font-semibold text-blue-600 hover:text-blue-700"
                     >
                         Login
                     </Link>
@@ -90,3 +145,4 @@ function Register() {
 }
 
 export default Register;
+

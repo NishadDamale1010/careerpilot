@@ -2,42 +2,48 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
-        name: {
-            type: String,
-            required: true
-        },
+        // ── Auth ──────────────────────────────────────────────────────────────
+        name: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        password: { type: String, required: true },
 
-        email: {
+        // ── Career Profile ────────────────────────────────────────────────────
+        jobTitle: { type: String, default: "" },             // "Full Stack Developer"
+        bio: { type: String, default: "" },                  // short intro
+        location: { type: String, default: "" },             // "Pune, India"
+        experienceLevel: {
             type: String,
-            required: true,
-            unique: true
+            enum: ["Student", "Entry Level", "Mid Level", "Senior Level", "Lead / Manager"],
+            default: "Student",
         },
-
-        password: {
+        preferredJobType: {
             type: String,
-            required: true
+            enum: ["Any", "Full-time", "Part-time", "Internship", "Remote", "Contract"],
+            default: "Any",
         },
+        preferredSalary: { type: String, default: "" },      // "10 LPA – 15 LPA"
+        openToWork: { type: Boolean, default: true },
 
+        // ── Skills ────────────────────────────────────────────────────────────
         skills: [String],
 
-        education: String,
+        // ── Education & Experience (legacy text fields) ───────────────────────
+        education: { type: String, default: "" },
+        experience: { type: String, default: "" },
 
-        experience: String,
+        // ── Social Links ──────────────────────────────────────────────────────
+        linkedIn: { type: String, default: "" },
+        github: { type: String, default: "" },
+        portfolio: { type: String, default: "" },
 
+        // ── Resume ────────────────────────────────────────────────────────────
         resumeUrl: String,
-
         resumeText: String,
 
-        savedJobs: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Job"
-            }
-        ]
+        // ── Saved Jobs ────────────────────────────────────────────────────────
+        savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
     },
-    {
-        timestamps: true
-    }
+    { timestamps: true }
 );
 
 module.exports = mongoose.model("User", userSchema);

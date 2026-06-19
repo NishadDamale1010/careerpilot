@@ -5,23 +5,31 @@ const refreshJobCache = async () => {
     try {
         const jobs = await aggregateJobs();
 
-        const operations = jobs.map((job) => {
-            const uniqueKey =
-                `${job.title}-${job.company}`.toLowerCase();
+        const operations = jobs
+            .filter((job) => job.title && job.company)
+            .map((job) => {
+                const uniqueKey = [
+                    job.title,
+                    job.company,
+                    job.applyUrl,
+                ]
+                    .filter(Boolean)
+                    .join("-")
+                    .toLowerCase();
 
-            return {
-                updateOne: {
-                    filter: { uniqueKey },
-                    update: {
-                        $set: {
-                            ...job,
-                            uniqueKey,
+                return {
+                    updateOne: {
+                        filter: { uniqueKey },
+                        update: {
+                            $set: {
+                                ...job,
+                                uniqueKey,
+                            },
                         },
+                        upsert: true,
                     },
-                    upsert: true,
-                },
-            };
-        });
+                };
+            });
 
         if (operations.length > 0) {
             await AggregatedJob.bulkWrite(operations);

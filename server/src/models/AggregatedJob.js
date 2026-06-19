@@ -9,6 +9,10 @@ const aggregatedJobSchema = new mongoose.Schema(
         applyUrl: String,
         postedAt: Date,
         type: String,
+        description: String,
+        salary: String,
+        companyLogo: String,
+        isRemote: { type: Boolean, default: false },
 
         uniqueKey: {
             type: String,
@@ -20,7 +24,4 @@ const aggregatedJobSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model(
-    "AggregatedJob",
-    aggregatedJobSchema
-);
+module.exports = mongoose.model("AggregatedJob", aggregatedJobSchema);
