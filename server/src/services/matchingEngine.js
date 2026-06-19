@@ -56,7 +56,7 @@ const calculateEducationMatch = (userDegree, requiredDegree) => {
     return 40;
 };
 
-const calculateJobMatch = (parsedResume, parsedJob, userLocationPref, jobLocation) => {
+const calculateJobMatch = (parsedResume, parsedJob, userLocationPref, jobLocation, jobCompany = "") => {
     if (!parsedResume || !parsedJob) return null;
 
     const skillData = calculateSkillMatch(parsedResume.skills, parsedJob.required_skills);
@@ -75,7 +75,24 @@ const calculateJobMatch = (parsedResume, parsedJob, userLocationPref, jobLocatio
     const salScore = 100;
 
     // Weights: 40% Skills, 25% Experience, 15% Education, 10% Location, 10% Salary
-    const overall_match = (skillData.score * 0.40) + (expScore * 0.25) + (eduScore * 0.15) + (locScore * 0.10) + (salScore * 0.10);
+    let overall_match = (skillData.score * 0.40) + (expScore * 0.25) + (eduScore * 0.15) + (locScore * 0.10) + (salScore * 0.10);
+
+    // ── Priority Company Boost ──
+    const SERVICE_COMPANIES = [
+        "tata consultancy services", "tcs", "infosys", "wipro", "hcl", "hcltech", 
+        "tech mahindra", "cognizant", "capgemini", "accenture", "ltimindtree", 
+        "persistent systems", "oracle", "ibm", "deloitte", "pwc", "ey", "kpmg", 
+        "ntt data", "mphasis", "hexaware", "birlasoft", "coforge"
+    ];
+    
+    if (jobCompany) {
+        const companyLower = jobCompany.toLowerCase();
+        const isPriority = SERVICE_COMPANIES.some(c => companyLower.includes(c));
+        if (isPriority) {
+            overall_match += 15; // 15 point artificial boost
+            if (overall_match > 100) overall_match = 100;
+        }
+    }
 
     return {
         overall_match: Math.round(overall_match),

@@ -236,7 +236,13 @@ const recommendJobsForResume = async (req, res) => {
             ? user.preferredJobType
             : "";
 
-        const searchQuery = `${finalRole} ${meaningfulSkills} ${jobTypeHint}`.trim();
+        const locationHint = user?.location ? user.location : "India";
+        
+        // Pick a random company to help seed JSearch results with the requested Tier 1/2 service companies
+        const priorityCompanies = ["TCS", "Infosys", "Wipro", "HCLTech", "Tech Mahindra", "Cognizant", "Capgemini", "Accenture", "LTIMindtree", "Persistent Systems", "Oracle", "IBM", "Deloitte", "PwC", "EY", "KPMG", "NTT DATA", "Mphasis", "Hexaware", "Birlasoft", "Coforge"];
+        const randomCompany = priorityCompanies[Math.floor(Math.random() * priorityCompanies.length)];
+
+        const searchQuery = `${finalRole} ${meaningfulSkills} ${jobTypeHint} in ${locationHint} ${randomCompany}`.trim();
 
         console.log(`[Recommend Jobs] Role: "${finalRole}" | Type: "${jobTypeHint}" | Query: "${searchQuery}"`);
 
@@ -278,7 +284,7 @@ const recommendJobsForResume = async (req, res) => {
             };
 
             // Calculate exact Match Score based on the user's parsed resume
-            const matchData = calculateJobMatch(user.parsedResume || { skills: user.skills.map(s => ({skill: s, proficiency_level: "intermediate"})) }, syntheticParsedJob, user.location, job.location);
+            const matchData = calculateJobMatch(user.parsedResume || { skills: user.skills.map(s => ({skill: s, proficiency_level: "intermediate"})) }, syntheticParsedJob, user.location, job.location, job.company);
             
             // Override with standard text match if AI parsedResume isn't available yet
             let matchScore = matchData?.overall_match || 0;
