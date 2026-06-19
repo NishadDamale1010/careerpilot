@@ -12,7 +12,7 @@ const toPositiveNumber = (value, fallback) => {
 
 const getAggregatedJobs = async (req, res) => {
     try {
-        const { search, location } = req.query;
+        const { search, location, source, type } = req.query;
         const filters = [];
 
         if (search) {
@@ -32,6 +32,31 @@ const getAggregatedJobs = async (req, res) => {
             filters.push({
                 location: new RegExp(escapeRegex(location), "i"),
             });
+        }
+
+        if (source && source.toLowerCase() !== "all") {
+            filters.push({
+                source: new RegExp(`^${escapeRegex(source)}$`, "i"),
+            });
+        }
+
+        if (type && type.toLowerCase() !== "all") {
+            if (type.toLowerCase() === "remote") {
+                filters.push({
+                    $or: [
+                        { isRemote: true },
+                        { location: new RegExp("remote", "i") },
+                    ],
+                });
+            } else {
+                const typeRegex = new RegExp(escapeRegex(type), "i");
+                filters.push({
+                    $or: [
+                        { type: typeRegex },
+                        { title: typeRegex },
+                    ],
+                });
+            }
         }
 
         const query = filters.length ? { $and: filters } : {};
