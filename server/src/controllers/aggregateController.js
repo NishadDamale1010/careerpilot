@@ -46,6 +46,7 @@ const getAggregatedJobs = async (req, res) => {
                                     },
                                     update: {
                                         $set: {
+                                            uniqueKey: [job.title, job.company, job.applyUrl || job.applyLink].filter(Boolean).join("-").toLowerCase(),
                                             title: job.title?.trim(),
                                             company: job.company?.trim(),
                                             location: job.location?.trim() || "Remote",

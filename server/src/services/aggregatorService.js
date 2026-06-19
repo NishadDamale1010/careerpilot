@@ -42,11 +42,23 @@ const aggregateJobs = async () => {
         fetchInternshalaJobs(),
     ]);
 
+    const SERVICE_COMPANIES = [
+        "tata consultancy services", "tcs", "infosys", "wipro", "hcl", "hcltech", 
+        "tech mahindra", "cognizant", "capgemini", "accenture", "ltimindtree", 
+        "persistent systems", "oracle", "ibm", "deloitte", "pwc", "ey", "kpmg", 
+        "ntt data", "mphasis", "hexaware", "birlasoft", "coforge"
+    ];
+
     // Flatten all results, skip failed sources gracefully
     const allJobs = results
         .flatMap((r) => (r.status === "fulfilled" ? r.value : []))
         .map(normalizeJob)
-        .filter((job) => job.title && job.company);
+        .filter((job) => job.title && job.company)
+        .filter((job) => {
+            const companyLower = job.company.toLowerCase();
+            // Strict Mode: Only allow Tier-1/Tier-2 service companies
+            return SERVICE_COMPANIES.some(c => companyLower.includes(c));
+        });
 
     // Deduplicate by title + company + applyUrl
     const uniqueJobs = [];

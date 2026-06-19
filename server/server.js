@@ -80,6 +80,7 @@ app.use('/api/users', getuserRoutes);
 app.use('/api/jobs/aggregate', aggregatedJobsRoutes);
 app.use('/api/jobs/saved', savedJobRoutes);
 app.use('/api/jobs', jobsRoutes);
+app.use('/api/jobs', require('./src/routes/userSubmissionRoutes'));
 app.use('/api/saved-jobs', savedJobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/application', applicationRoutes);
