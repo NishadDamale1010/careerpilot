@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import heroDashboard from "../assets/landing-dashboard.png";
 import { getErrorMessage } from "../services/api";
 import { loginUser } from "../services/authService";
 import toast from "react-hot-toast";
+import heroDashboard from "../assets/landing-dashboard.png";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -32,12 +32,14 @@ export default function Login() {
 
     return (
         <div
-            className="flex min-h-screen items-center justify-center px-4 py-10 transition-colors"
-            style={{ background: "var(--bg)" }}
+            className="flex min-h-screen items-center justify-center bg-cover bg-center px-4 py-10 transition-colors"
+            style={{
+                backgroundImage: `linear-gradient(90deg, rgba(248,250,252,0.92), rgba(248,250,252,0.85)), url(${heroDashboard})`,
+            }}
         >
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-md rounded-2xl border border-[var(--border)] glass-card p-8 shadow-lg"
+                className="w-full max-w-md rounded-2xl border border-[var(--border)] glass-card p-8 shadow-xl"
             >
                 <Link to="/" className="text-sm font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)]">
                     CareerPilot
@@ -78,7 +80,7 @@ export default function Login() {
                     id="login-submit"
                     type="submit"
                     disabled={loading}
-                    className="btn btn-primary w-full mt-6 py-3"
+                    className="btn w-full mt-6 py-3 bg-slate-950 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200 border-none"
                 >
                     {loading ? "Signing in..." : "Sign In"}
                 </button>
