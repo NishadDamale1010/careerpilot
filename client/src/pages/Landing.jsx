@@ -188,11 +188,12 @@ export default function Landing() {
                 </motion.div>
 
                 {/* Dashboard preview card */}
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                    className="relative z-10 mt-16 max-w-5xl w-full mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl"
+                <div className="w-full flex justify-center mt-16 relative z-10 px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                        className="max-w-5xl w-full rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl"
                     style={{
                         border: "1px solid var(--border)",
                         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
@@ -209,12 +210,13 @@ export default function Landing() {
                         className="w-full block"
                         style={{ objectFit: "cover", objectPosition: "top" }}
                     />
-                </motion.div>
+                    </motion.div>
+                </div>
             </section>
 
             {/* ── STATS ── */}
-            <div style={{ background: "var(--bg-card)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-                <div className="mx-auto max-w-5xl px-6 sm:px-12 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
+            <div className="w-full flex justify-center" style={{ background: "var(--bg-card)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+                <div className="w-full max-w-5xl px-6 sm:px-12 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
                     {stats.map((s, i) => (
                         <motion.div 
                             key={s.label} 
@@ -232,8 +234,8 @@ export default function Landing() {
             </div>
 
             {/* ── FEATURES ── */}
-            <section className="py-20 px-6 sm:px-12">
-                <div className="mx-auto max-w-5xl">
+            <section className="py-20 px-6 sm:px-12 w-full flex justify-center">
+                <div className="w-full max-w-5xl">
                     <div className="text-center mb-12">
                         <p className="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-3">Everything in One Platform</p>
                         <h2 className="text-2xl sm:text-3xl font-bold mb-3" style={{ color: "var(--text-primary)", letterSpacing: "-0.015em" }}>
@@ -270,7 +272,7 @@ export default function Landing() {
 
             {/* ── CTA ── */}
             <section
-                className="relative py-24 px-6 sm:px-12 overflow-hidden"
+                className="relative py-24 px-6 sm:px-12 overflow-hidden w-full flex justify-center"
                 style={{ background: ctaGradient }}
             >
                 <motion.div 
@@ -278,7 +280,7 @@ export default function Landing() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
                     transition={{ duration: 0.6 }}
-                    className="relative z-10 mx-auto max-w-2xl text-center"
+                    className="relative z-10 w-full max-w-2xl text-center"
                 >
                     <h2 className="text-2xl sm:text-3xl font-bold mb-3" style={{ color: "var(--text-primary)", letterSpacing: "-0.015em" }}>
                         Start your job search today
