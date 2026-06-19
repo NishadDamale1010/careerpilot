@@ -148,12 +148,20 @@ export default function AIMatch() {
                             <div key={job._id || job.applyUrl} className="glass-card-hover p-6">
                                 <div className="flex items-start justify-between gap-3 mb-3">
                                     <div className="flex items-start gap-3 min-w-0">
-                                        <div
-                                            className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black text-white flex-shrink-0"
-                                            style={{ background: "linear-gradient(135deg,#2563eb,#1d4ed8)" }}
-                                        >
-                                            {(job.company || "?").charAt(0)}
-                                        </div>
+                                        {job.companyLogo ? (
+                                            <img
+                                                src={job.companyLogo}
+                                                alt={job.company}
+                                                className="w-10 h-10 rounded-xl object-contain bg-white border border-[var(--border)] p-1 flex-shrink-0"
+                                            />
+                                        ) : (
+                                            <div
+                                                className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black text-white flex-shrink-0"
+                                                style={{ background: "linear-gradient(135deg,#2563eb,#1d4ed8)" }}
+                                            >
+                                                {(job.company || "?").charAt(0).toUpperCase()}
+                                            </div>
+                                        )}
                                         <div className="min-w-0">
                                             <p className="font-bold text-sm truncate" style={{ color: "var(--text-primary)" }}>{job.title}</p>
                                             <p className="text-xs truncate" style={{ color: "var(--text-secondary)" }}>{job.company} {job.location ? `· ${job.location}` : ""}</p>

@@ -231,10 +231,10 @@ const recommendJobsForResume = async (req, res) => {
             .slice(0, 4)
             .join(" ");
 
-        // Factor in preferred job type (e.g., "Internship", "Remote") if not "Any"
+        // Factor in preferred job type to show BOTH internships and full-time jobs
         const jobTypeHint = user?.preferredJobType && user.preferredJobType !== "Any"
             ? user.preferredJobType
-            : "";
+            : "Internship or Full-time";
 
         const locationHint = user?.location ? user.location : "Pune, India";
         
