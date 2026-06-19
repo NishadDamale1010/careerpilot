@@ -236,7 +236,7 @@ const recommendJobsForResume = async (req, res) => {
             ? user.preferredJobType
             : "";
 
-        const locationHint = user?.location ? user.location : "India";
+        const locationHint = user?.location ? user.location : "Pune, India";
         
         // Pick a random company to help seed JSearch results with the requested Tier 1/2 service companies
         const priorityCompanies = ["TCS", "Infosys", "Wipro", "HCLTech", "Tech Mahindra", "Cognizant", "Capgemini", "Accenture", "LTIMindtree", "Persistent Systems", "Oracle", "IBM", "Deloitte", "PwC", "EY", "KPMG", "NTT DATA", "Mphasis", "Hexaware", "Birlasoft", "Coforge"];

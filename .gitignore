@@ -1,3 +1,4 @@
 node_modules
 .env
 server/src/uploads/
+project_overview.md

@@ -5,17 +5,17 @@ const AggregatedJob = require("./src/models/AggregatedJob");
 const { calculateAdvancedTrustScore } = require("./src/utils/advancedTrustDetector");
 
 const TARGETS = [
-    "TCS fresher jobs India", 
-    "Infosys jobs India", 
-    "Wipro internships", 
-    "Cognizant hiring India",
-    "Capgemini fresher India",
-    "Tech Mahindra jobs",
-    "Deloitte internships India",
-    "IBM software engineer fresher India",
-    "Genpact fresher India",
-    "HCLTech fresher India",
-    "Accenture entry level India"
+    "TCS fresher jobs Pune India", 
+    "Infosys jobs Pune India", 
+    "Wipro internships Pune India", 
+    "Cognizant hiring Pune India",
+    "Capgemini fresher Pune India",
+    "Tech Mahindra jobs Pune India",
+    "Deloitte internships Pune India",
+    "IBM software engineer fresher Pune India",
+    "Genpact fresher Pune India",
+    "HCLTech fresher Pune India",
+    "Accenture entry level Pune India"
 ];
 
 async function seed() {
