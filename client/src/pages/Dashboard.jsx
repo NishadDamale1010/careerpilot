@@ -671,6 +671,17 @@ export default function Dashboard() {
     const now = new Date();
     const hour = now.getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
+    
+    let userName = "";
+    try {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const p = JSON.parse(atob(token.split(".")[1]));
+            if (p.name) userName = `, ${p.name.split(" ")[0]}`;
+        }
+    } catch (e) {
+        // ignore
+    }
 
     // ============================================
     // RENDER
@@ -685,7 +696,7 @@ export default function Dashboard() {
                         className="text-4xl font-bold"
                         style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}
                     >
-                        👋 {greeting}, Nishad
+                        👋 {greeting}{userName}
                     </h1>
                     <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
                         Track jobs, applications, interviews and career growth from one place.
