@@ -91,6 +91,6 @@ export default function SubmitJob() {
                     </button>
                 </form>
             </div>
-        </div>
+        </motion.div>
     );
 }
