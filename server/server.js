@@ -19,7 +19,11 @@ app.use(helmet({
 }));
 
 // 2. Prevent NoSQL Injection
-app.use(mongoSanitize());
+app.use(
+    mongoSanitize({
+        replaceWith: "_",
+    })
+);
 
 app.use(cors({
     origin: true, // Reflects the incoming origin (allows cross-origin with credentials)
@@ -89,11 +93,11 @@ app.get('/', (req, res) => {
 // ── GLOBAL ERROR HANDLER ──────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
     console.error(`[Error] ${err.message}`);
-    
+
     // Hide stack trace in production
     const status = err.status || 500;
     const message = err.message || "Internal Server Error";
-    
+
     res.status(status).json({
         message,
         stack: process.env.NODE_ENV === 'production' ? null : err.stack
