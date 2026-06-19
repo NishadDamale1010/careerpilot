@@ -16,6 +16,74 @@ const getAggregatedJobs = async (req, res) => {
         const filters = [];
 
         if (search) {
+            const SearchCache = require("../models/SearchCache");
+            const { fetchJSearchJobsBySkills } = require("../services/JSearchService");
+            const { calculateAdvancedTrustScore } = require("../utils/advancedTrustDetector");
+
+            const normalizedQuery = search.toLowerCase().trim();
+            const cacheEntry = await SearchCache.findOne({ query: normalizedQuery });
+            
+            // Check if older than 6 hours (6 * 60 * 60 * 1000)
+            const SIX_HOURS = 6 * 60 * 60 * 1000;
+            const isStale = !cacheEntry || (Date.now() - new Date(cacheEntry.lastFetchedAt).getTime() > SIX_HOURS);
+
+            if (isStale) {
+                console.log(`[Cache Miss] Fetching live jobs for: "${normalizedQuery}"`);
+                try {
+                    // Fetch live jobs
+                    const liveJobs = await fetchJSearchJobsBySkills(normalizedQuery);
+                    
+                    if (liveJobs && liveJobs.length > 0) {
+                        // Normalize and prepare for upsert
+                        const bulkOps = liveJobs.map(job => {
+                            const trustData = calculateAdvancedTrustScore(job);
+                            return {
+                                updateOne: {
+                                    filter: { 
+                                        title: job.title?.trim(), 
+                                        company: job.company?.trim(), 
+                                        applyUrl: job.applyUrl || job.applyLink 
+                                    },
+                                    update: {
+                                        $set: {
+                                            title: job.title?.trim(),
+                                            company: job.company?.trim(),
+                                            location: job.location?.trim() || "Remote",
+                                            description: job.description,
+                                            applyUrl: job.applyUrl || job.applyLink,
+                                            source: job.source,
+                                            type: job.type || "Full-time",
+                                            postedAt: job.postedAt || new Date(),
+                                            salary: job.salary,
+                                            companyLogo: job.companyLogo,
+                                            isRemote: job.isRemote,
+                                            trustScore: trustData.trust_score,
+                                            suspicious: trustData.trust_score < 50,
+                                            suspiciousReasons: trustData.scam_flags.length > 0 ? trustData.scam_flags.map(f => f.flag) : undefined
+                                        }
+                                    },
+                                    upsert: true
+                                }
+                            };
+                        });
+                        
+                        await AggregatedJob.bulkWrite(bulkOps, { ordered: false });
+                    }
+
+                    // Update or create cache entry
+                    if (cacheEntry) {
+                        cacheEntry.lastFetchedAt = Date.now();
+                        await cacheEntry.save();
+                    } else {
+                        await SearchCache.create({ query: normalizedQuery });
+                    }
+                } catch (fetchErr) {
+                    console.error("[Live Fetch Error during Search]:", fetchErr.message);
+                }
+            } else {
+                console.log(`[Cache Hit] Using cached jobs for: "${normalizedQuery}"`);
+            }
+
             const regex = new RegExp(escapeRegex(search), "i");
             filters.push({
                 $or: [
