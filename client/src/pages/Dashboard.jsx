@@ -80,6 +80,30 @@ function countInternships(jobs) {
     }).length;
 }
 
+const SERVICE_COMPANIES = [
+    "tata consultancy services", "tcs", "infosys", "wipro", "hcl", "hcltech", 
+    "tech mahindra", "cognizant", "capgemini", "accenture", "ltimindtree", 
+    "persistent systems", "oracle", "ibm", "deloitte", "pwc", "ey", "kpmg", 
+    "ntt data", "mphasis", "hexaware", "birlasoft", "coforge"
+];
+
+function sortPriorityCompaniesFirst(jobs) {
+    return [...jobs].sort((a, b) => {
+        const aCompany = (a.company || "").toLowerCase();
+        const bCompany = (b.company || "").toLowerCase();
+        const aIsPriority = SERVICE_COMPANIES.some(c => aCompany.includes(c));
+        const bIsPriority = SERVICE_COMPANIES.some(c => bCompany.includes(c));
+        if (aIsPriority && !bIsPriority) return -1;
+        if (!aIsPriority && bIsPriority) return 1;
+        
+        // fallback to normal matchScore or date sorting if both are priority or both are not
+        const aScore = a.matchScore || 0;
+        const bScore = b.matchScore || 0;
+        if (aScore !== bScore) return bScore - aScore;
+        return new Date(b.postedAt || 0) - new Date(a.postedAt || 0);
+    });
+}
+
 // ============================================
 // STAT CARD COMPONENT (Memoized)
 // ============================================
@@ -394,6 +418,7 @@ export default function Dashboard() {
         resumeScore: 0,
     });
     const [recentJobs, setRecentJobs] = useState([]);
+    const [recentInternships, setRecentInternships] = useState([]);
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -410,8 +435,9 @@ export default function Dashboard() {
                 setLoading(true);
                 setError("");
 
-                const [jobsRes, savedRes, appRes] = await Promise.all([
+                const [jobsRes, aggRes, savedRes, appRes] = await Promise.all([
                     getRecommendedJobs().catch(() => ({ data: { jobs: [] } })),
+                    getAggregatedJobs({ limit: 50 }).catch(() => ({ data: { jobs: [] } })),
                     getSavedJobs().catch(() => ({ data: [] })),
                     getApplications().catch(() => ({ data: [] })),
                 ]);
@@ -420,12 +446,35 @@ export default function Dashboard() {
 
                 const savedJobs = savedRes?.data || [];
                 const apps = appRes?.data || [];
-                const jobList = jobsRes?.data?.jobs || [];
+                
+                const aiJobs = jobsRes?.data?.jobs || [];
+                const allRecent = aggRes?.data?.jobs || [];
+                
+                // Deduplicate pool
+                const seenKeys = new Set();
+                const combinedPool = [...aiJobs, ...allRecent].filter(j => {
+                    const key = `${j.title}-${j.company}`;
+                    if (seenKeys.has(key)) return false;
+                    seenKeys.add(key);
+                    return true;
+                });
+
+                const internshipsPool = combinedPool.filter(job => {
+                    const type = job.type?.toLowerCase() || "";
+                    const title = job.title?.toLowerCase() || "";
+                    return type.includes("intern") || title.includes("intern");
+                });
+
+                const fulltimePool = combinedPool.filter(job => {
+                    const type = job.type?.toLowerCase() || "";
+                    const title = job.title?.toLowerCase() || "";
+                    return !type.includes("intern") && !title.includes("intern");
+                });
 
                 const interviews = apps.filter((a) => a.status === "Interview").length;
                 const offers = apps.filter((a) => a.status === "Offer").length;
-                const internships = countInternships(jobList);
-                const totalJobs = jobsRes?.data?.totalJobs || jobList.length;
+                const internships = countInternships(combinedPool);
+                const totalJobs = combinedPool.length;
 
                 const resumeScore = calculateResumeScore(
                     savedJobs.length,
@@ -442,7 +491,8 @@ export default function Dashboard() {
                     resumeScore,
                 });
 
-                setRecentJobs(jobList.slice(0, 6));
+                setRecentJobs(sortPriorityCompaniesFirst(fulltimePool).slice(0, 6));
+                setRecentInternships(sortPriorityCompaniesFirst(internshipsPool).slice(0, 6));
                 setApplications(apps);
             } catch (err) {
                 if (isMounted) {
@@ -702,7 +752,7 @@ export default function Dashboard() {
                             className="text-xl font-semibold"
                             style={{ color: "var(--text-primary)" }}
                         >
-                            Recommended For You
+                            Top Full-Time Jobs
                         </h2>
                         <Link
                             to="/ai-match"
@@ -716,25 +766,25 @@ export default function Dashboard() {
                     <JobsList jobs={recentJobs} loading={loading} />
                 </div>
 
-                {/* Recent Applications */}
+                {/* Top Internships */}
                 <div className="lg:col-span-6 card p-6">
                     <div className="flex items-center justify-between mb-4">
                         <h2
                             className="text-xl font-semibold"
                             style={{ color: "var(--text-primary)" }}
                         >
-                            Recent Applications
+                            Top Internships
                         </h2>
                         <Link
-                            to="/applications"
+                            to="/jobs"
                             className="text-sm font-medium"
                             style={{ color: "#2563eb" }}
-                            aria-label="View all applications"
+                            aria-label="View all internships"
                         >
                             View all
                         </Link>
                     </div>
-                    <ApplicationsList applications={applications} loading={loading} />
+                    <JobsList jobs={recentInternships} loading={loading} />
                 </div>
             </div>
 
