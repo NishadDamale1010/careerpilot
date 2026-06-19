@@ -46,7 +46,12 @@ const aggregateJobs = async () => {
         "tata consultancy services", "tcs", "infosys", "wipro", "hcl", "hcltech", 
         "tech mahindra", "cognizant", "capgemini", "accenture", "ltimindtree", 
         "persistent systems", "oracle", "ibm", "deloitte", "pwc", "ey", "kpmg", 
-        "ntt data", "mphasis", "hexaware", "birlasoft", "coforge"
+        "ntt data", "mphasis", "hexaware", "birlasoft", "coforge", "virtusa",
+        "cyient", "kpit", "zensar", "sonata software", "nagarro", "globallogic",
+        "quest global", "l&t technology services", "larsen & toubro infotech", "amdocs",
+        "genpact", "wns", "concentrix", "teleperformance", "sutherland", "foundever",
+        "exl", "firstsource", "hgs", "ttec", "brillio", "publicis sapient", 
+        "epam", "thoughtworks", "rackspace", "fujitsu", "dxc", "cgi"
     ];
 
     // Flatten all results, skip failed sources gracefully

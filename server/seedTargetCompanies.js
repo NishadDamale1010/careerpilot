@@ -9,7 +9,13 @@ const TARGETS = [
     "Infosys jobs India", 
     "Wipro internships", 
     "Cognizant hiring India",
-    "Capgemini fresher India"
+    "Capgemini fresher India",
+    "Tech Mahindra jobs",
+    "Deloitte internships India",
+    "IBM software engineer fresher India",
+    "Genpact fresher India",
+    "HCLTech fresher India",
+    "Accenture entry level India"
 ];
 
 async function seed() {
