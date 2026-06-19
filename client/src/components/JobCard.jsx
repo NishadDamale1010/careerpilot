@@ -97,17 +97,17 @@ export default function JobCard({ job, onUnsave }) {
 
                 {/* Right Side Info */}
                 <div className="flex flex-col items-end gap-2 flex-shrink-0 pl-2">
-                    {job.suspicious && (
+                    {job.trustScore !== undefined && (
                         <div
-                            className="px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap border cursor-help"
+                            className="px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap border cursor-help flex items-center gap-1.5"
                             style={{
-                                background: "var(--danger-light)",
-                                color: "var(--danger)",
-                                borderColor: "rgba(239,68,68,0.2)",
+                                background: job.trustScore >= 80 ? "var(--success-light)" : job.trustScore >= 50 ? "var(--warning-light)" : "var(--danger-light)",
+                                color: job.trustScore >= 80 ? "var(--success)" : job.trustScore >= 50 ? "var(--warning)" : "var(--danger)",
+                                borderColor: job.trustScore >= 80 ? "rgba(22,197,94,0.2)" : job.trustScore >= 50 ? "rgba(245,158,11,0.2)" : "rgba(239,68,68,0.2)",
                             }}
-                            title={job.suspiciousReasons?.join(" | ")}
+                            title={job.suspiciousReasons?.length > 0 ? job.suspiciousReasons.join(" | ") : "Verified safe by AI"}
                         >
-                            🚩 Suspicious
+                            {job.trustScore >= 80 ? "🛡️ High Trust" : job.trustScore >= 50 ? "⚠️ Moderate Trust" : "🚩 Suspicious"}
                         </div>
                     )}
                     {matchScore !== undefined && (

@@ -17,8 +17,11 @@ const normalizeJob = (job) => {
     };
 
     const fakeCheck = detectFakeJob(norm);
-    if (fakeCheck.isSuspicious) {
-        norm.suspicious = true;
+    
+    // Convert penalty score to a 0-100 Trust Score
+    norm.trustScore = Math.max(0, 100 - fakeCheck.score);
+    norm.suspicious = fakeCheck.isSuspicious;
+    if (fakeCheck.reasons.length > 0) {
         norm.suspiciousReasons = fakeCheck.reasons;
     }
 

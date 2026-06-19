@@ -13,6 +13,9 @@ const aggregatedJobSchema = new mongoose.Schema(
         salary: String,
         companyLogo: String,
         isRemote: { type: Boolean, default: false },
+        trustScore: { type: Number, default: 100 },
+        suspicious: { type: Boolean, default: false },
+        suspiciousReasons: [String],
 
         uniqueKey: {
             type: String,
