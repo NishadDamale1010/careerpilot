@@ -32,10 +32,8 @@ export default function Login() {
 
     return (
         <div
-            className="flex min-h-screen items-center justify-center bg-slate-950 bg-cover bg-center px-4 py-10"
-            style={{
-                backgroundImage: `linear-gradient(90deg, rgba(248,250,252,0.96), rgba(248,250,252,0.9)), url(${heroDashboard})`,
-            }}
+            className="flex min-h-screen items-center justify-center px-4 py-10 transition-colors"
+            style={{ background: "var(--bg)" }}
         >
             <form
                 onSubmit={handleSubmit}
@@ -50,27 +48,27 @@ export default function Login() {
                     Sign in to continue tracking jobs and applications.
                 </p>
 
-                <label className="mt-6 block text-sm font-semibold text-[var(--text-primary)]">
+                <label className="mt-6 block text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     Email
                     <input
                         id="login-email"
                         type="email"
                         name="email"
                         value={formData.email}
-                        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        className="input mt-1.5"
                         onChange={handleChange}
                         required
                     />
                 </label>
 
-                <label className="mt-4 block text-sm font-medium text-slate-700">
+                <label className="mt-4 block text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     Password
                     <input
                         id="login-password"
                         type="password"
                         name="password"
                         value={formData.password}
-                        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        className="input mt-1.5"
                         onChange={handleChange}
                         required
                     />
@@ -80,14 +78,14 @@ export default function Login() {
                     id="login-submit"
                     type="submit"
                     disabled={loading}
-                    className="mt-6 w-full rounded-md bg-slate-950 px-4 py-2.5 font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="btn btn-primary w-full mt-6 py-3"
                 >
                     {loading ? "Signing in..." : "Sign In"}
                 </button>
 
-                <p className="mt-5 text-center text-sm text-slate-600">
+                <p className="mt-5 text-center text-sm" style={{ color: "var(--text-secondary)" }}>
                     Don't have an account?
-                    <Link to="/register" className="ml-2 font-semibold text-blue-600 hover:text-blue-700">
+                    <Link to="/register" className="ml-2 font-semibold" style={{ color: "var(--primary)" }}>
                         Register
                     </Link>
                 </p>

@@ -150,14 +150,15 @@ export default function Landing() {
                     </p>
 
                     <h1
-                        className="text-5xl sm:text-7xl font-extrabold leading-[1.1] mb-6"
-                        style={{ color: "var(--text-primary)", letterSpacing: "-0.03em" }}
+                        className="text-5xl sm:text-7xl font-extrabold leading-[1.1] mb-6 text-slate-900 dark:text-white"
+                        style={{ letterSpacing: "-0.03em" }}
                     >
                         Your complete{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500 dark:from-blue-400 dark:to-indigo-400">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
                             career command
                         </span>
-                        <br />centre
+                        <br />
+                        centre
                     </h1>
 
                     <p className="text-base sm:text-lg max-w-xl mx-auto mb-9 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
