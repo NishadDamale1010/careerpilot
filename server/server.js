@@ -13,8 +13,10 @@ connectDB();
 startJobRefreshCron();
 
 // ── SECURITY MIDDLEWARE ───────────────────────────────────────────────────────
-// 1. Set Security HTTP Headers
-app.use(helmet());
+// 1. Set Security HTTP Headers (with cross-origin allowed for the API)
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
 
 // 2. Prevent NoSQL Injection
 app.use(mongoSanitize());
