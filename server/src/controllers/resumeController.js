@@ -138,16 +138,26 @@ const uploadResume = async (req, res) => {
 
         const wordCount = getWordCount(extractedText);
 
-        // Use Groq AI if key is configured, else fallback to keyword matching
-        const skills = GROQ_API_KEY
-            ? await extractSkillsWithAI(extractedText)
-            : extractSkillsKeyword(extractedText);
+        // Use Groq AI to perform structured resume parsing
+        const { parseResumeWithGroq } = require("../services/resumeParserService");
+        let parsedResume = null;
+        let skills = [];
+
+        if (GROQ_API_KEY) {
+            parsedResume = await parseResumeWithGroq(extractedText);
+            if (parsedResume && parsedResume.skills) {
+                // Map structured skills back to simple array for backward compatibility
+                skills = parsedResume.skills.map(s => s.skill || s);
+            }
+        } else {
+            skills = extractSkillsKeyword(extractedText);
+        }
 
         const matchScore = Math.min(100, Math.round((skills.length / 15) * 100));
 
         const updatedUser = await User.findByIdAndUpdate(
             req.user._id,
-            { resumeUrl: req.file.path, resumeText: extractedText, skills },
+            { resumeUrl: req.file.path, resumeText: extractedText, skills, parsedResume },
             { new: true }
         );
 
@@ -255,20 +265,45 @@ const recommendJobsForResume = async (req, res) => {
                 .lean();
         }
 
-        // ── Annotate each job with matched skills (skip single-char skills) ───
-        const matchableSkills = skills.filter((s) => s.length >= 3);
-
+        // ── 4. Use the new Advanced Algorithmic Matching Engine ──
+        const { calculateJobMatch } = require("../services/matchingEngine");
+        
         const jobsWithMatch = jobs.map((job) => {
+            // We use simple job parsing here to avoid LLM rate limits on 20 jobs.
+            // If we wanted to hit Groq, we'd do it async and cache it.
+            const syntheticParsedJob = {
+                required_skills: (skills || []).map(s => ({ skill: s, level: "intermediate", importance: "nice_to_have" })),
+                experience_required: { years: 0 },
+                education_required: "bachelors"
+            };
+
+            // Calculate exact Match Score based on the user's parsed resume
+            const matchData = calculateJobMatch(user.parsedResume || { skills: user.skills.map(s => ({skill: s, proficiency_level: "intermediate"})) }, syntheticParsedJob, user.location, job.location);
+            
+            // Override with standard text match if AI parsedResume isn't available yet
+            let matchScore = matchData?.overall_match || 0;
+            let matchedSkills = matchData?.matched_skills || [];
+            let missingSkills = matchData?.missing_skills || [];
+            
+            // Simple text fallback for skills if synthetic didn't catch it
             const jobText = `${job.title || ""} ${job.description || ""}`.toLowerCase();
-            const matchedSkills = matchableSkills.filter((skill) =>
-                jobText.includes(skill.toLowerCase())
-            );
-            return { ...job, matchedSkills };
+            const textMatched = skills.filter(s => jobText.includes(s.toLowerCase()));
+            if (textMatched.length > matchedSkills.length) {
+                matchedSkills = textMatched;
+                matchScore = Math.max(matchScore, Math.round((textMatched.length / Math.max(skills.length, 1)) * 100));
+            }
+
+            return { 
+                ...job, 
+                matchScore, 
+                matchedSkills,
+                missingSkills
+            };
         });
 
-        // Sort by matched skill count (desc), then by date (desc)
+        // Sort by Match Score (desc)
         jobsWithMatch.sort((a, b) => {
-            const diff = b.matchedSkills.length - a.matchedSkills.length;
+            const diff = (b.matchScore || 0) - (a.matchScore || 0);
             if (diff !== 0) return diff;
             return new Date(b.postedAt || 0) - new Date(a.postedAt || 0);
         });

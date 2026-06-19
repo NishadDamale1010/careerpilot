@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema(
         // ── Resume ────────────────────────────────────────────────────────────
         resumeUrl: String,
         resumeText: String,
+        parsedResume: { type: mongoose.Schema.Types.Mixed }, // Structured JSON from AI
 
         // ── Saved Jobs ────────────────────────────────────────────────────────
         savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],

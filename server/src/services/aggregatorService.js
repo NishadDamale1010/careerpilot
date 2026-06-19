@@ -4,7 +4,8 @@ const fetchWellfoundJobs = require("./wellfoundService");
 const fetchJSearchJobs = require("./JSearchService");
 const fetchMuseJobs = require("./theMuseservice");
 const fetchInternshalaJobs = require("./internshalaService");
-const { detectFakeJob } = require("../utils/fakeJobDetector");
+const { calculateAdvancedTrustScore } = require("../utils/advancedTrustDetector");
+const JobTrustScore = require("../models/JobTrustScore");
 
 const normalizeJob = (job) => {
     const norm = {
@@ -16,14 +17,17 @@ const normalizeJob = (job) => {
         postedAt: job.postedAt || job.postedDate,
     };
 
-    const fakeCheck = detectFakeJob(norm);
+    const trustData = calculateAdvancedTrustScore(norm);
     
-    // Convert penalty score to a 0-100 Trust Score
-    norm.trustScore = Math.max(0, 100 - fakeCheck.score);
-    norm.suspicious = fakeCheck.isSuspicious;
-    if (fakeCheck.reasons.length > 0) {
-        norm.suspiciousReasons = fakeCheck.reasons;
+    norm.trustScore = trustData.trust_score;
+    norm.suspicious = trustData.trust_score < 50;
+    
+    if (trustData.scam_flags.length > 0) {
+        norm.suspiciousReasons = trustData.scam_flags.map(f => f.flag);
     }
+    
+    // Attach trustData temporarily to save it to the DB later
+    norm._trustData = trustData;
 
     return norm;
 };
