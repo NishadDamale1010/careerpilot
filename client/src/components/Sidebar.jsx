@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const nav = [
     { to: "/dashboard", label: "Dashboard", emoji: "grid" },
@@ -66,6 +67,48 @@ export default function Sidebar({ collapsed }) {
     const darkLinkClass = ({ isActive }) =>
         `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 sidebar-link ${isActive ? "sidebar-link-active" : ""}`;
 
+    const NavItem = ({ item }) => {
+        const [isHovered, setIsHovered] = useState(false);
+        const location = useLocation();
+        const isActive = location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
+
+        return (
+            <div 
+                className="relative"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <NavLink
+                    to={item.to}
+                    className={`nav-link${isActive ? " active" : ""}`}
+                >
+                    <span className="flex-shrink-0 opacity-80">{icons[item.emoji]}</span>
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                    {!collapsed && item.badge && (
+                        <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">
+                            {item.badge}
+                        </span>
+                    )}
+                </NavLink>
+                <AnimatePresence>
+                    {collapsed && isHovered && (
+                        <motion.div
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute left-[110%] top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-neutral-800 text-white text-xs font-semibold rounded shadow-xl z-50 pointer-events-none whitespace-nowrap"
+                        >
+                            {item.label}
+                            {item.badge && <span className="ml-2 text-[9px] bg-blue-600 px-1 rounded">{item.badge}</span>}
+                            <div className="absolute top-1/2 -translate-y-1/2 right-[100%] border-[4px] border-transparent border-r-neutral-800" />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        );
+    };
+
     return (
         <aside
             className="sticky top-0 h-screen flex flex-col z-30 shrink-0"
@@ -94,20 +137,7 @@ export default function Sidebar({ collapsed }) {
                     </p>
                 )}
                 {nav.map((item) => (
-                    <NavLink
-                        key={item.to}
-                        to={item.to}
-                        title={collapsed ? item.label : undefined}
-                        className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
-                    >
-                        <span className="flex-shrink-0 opacity-80">{icons[item.emoji]}</span>
-                        {!collapsed && <span className="truncate">{item.label}</span>}
-                        {!collapsed && item.badge && (
-                            <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">
-                                {item.badge}
-                            </span>
-                        )}
-                    </NavLink>
+                    <NavItem key={item.to} item={item} />
                 ))}
 
                 <div className="pt-4 mt-3 border-t" style={{ borderTop: "1px solid var(--border)" }}>
@@ -117,20 +147,7 @@ export default function Sidebar({ collapsed }) {
                         </p>
                     )}
                     {aiNav.map((item) => (
-                        <NavLink
-                            key={item.to}
-                            to={item.to}
-                            title={collapsed ? item.label : undefined}
-                            className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
-                        >
-                            <span className="flex-shrink-0 opacity-80">{icons[item.emoji]}</span>
-                            {!collapsed && <span className="truncate">{item.label}</span>}
-                            {!collapsed && item.badge && (
-                                <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">
-                                    {item.badge}
-                                </span>
-                            )}
-                        </NavLink>
+                        <NavItem key={item.to} item={item} />
                     ))}
                 </div>
             </nav>

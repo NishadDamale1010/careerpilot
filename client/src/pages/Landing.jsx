@@ -1,6 +1,32 @@
 import { Link } from "react-router-dom";
 import heroDashboard from "../assets/landing-dashboard.png";
 import { useTheme } from "../context/ThemeContext";
+import { motion } from "framer-motion";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef } from "react";
+import { Float, Sphere, MeshDistortMaterial } from "@react-three/drei";
+
+function Hero3DBackground() {
+    return (
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-20">
+            <Canvas camera={{ position: [0, 0, 5] }}>
+                <ambientLight intensity={1} />
+                <directionalLight position={[10, 10, 5]} intensity={2} />
+                <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+                    <Sphere args={[1.5, 64, 64]} position={[0, 0, 0]}>
+                        <MeshDistortMaterial
+                            color="#3b82f6"
+                            attach="material"
+                            distort={0.4}
+                            speed={2}
+                            roughness={0.2}
+                        />
+                    </Sphere>
+                </Float>
+            </Canvas>
+        </div>
+    );
+}
 
 const features = [
     { icon: "🎯", title: "AI Job Matching", text: "Match your resume to thousands of live jobs with a compatibility score and missing skills breakdown." },
@@ -105,7 +131,13 @@ export default function Landing() {
                     minHeight: "88vh",
                 }}
             >
-                <div className="relative z-10 max-w-3xl mx-auto">
+                <Hero3DBackground />
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="relative z-10 max-w-3xl mx-auto"
+                >
                     <p
                         className="inline-block text-xs font-semibold uppercase tracking-widest mb-5 px-3 py-1 rounded-full"
                         style={{
@@ -152,10 +184,13 @@ export default function Landing() {
                             Browse Jobs
                         </Link>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Dashboard preview card */}
-                <div
+                <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
                     className="relative z-10 mt-16 max-w-5xl w-full mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl"
                     style={{
                         border: "1px solid var(--border)",
@@ -173,17 +208,24 @@ export default function Landing() {
                         className="w-full block"
                         style={{ objectFit: "cover", objectPosition: "top" }}
                     />
-                </div>
+                </motion.div>
             </section>
 
             {/* ── STATS ── */}
             <div style={{ background: "var(--bg-card)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
                 <div className="mx-auto max-w-5xl px-6 sm:px-12 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
-                    {stats.map((s) => (
-                        <div key={s.label} className="text-center">
+                    {stats.map((s, i) => (
+                        <motion.div 
+                            key={s.label} 
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ delay: i * 0.1, duration: 0.5 }}
+                            className="text-center"
+                        >
                             <p className="text-2xl font-extrabold" style={{ color: "var(--text-primary)" }}>{s.value}</p>
                             <p className="text-xs font-medium mt-0.5 uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{s.label}</p>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>
@@ -203,12 +245,13 @@ export default function Landing() {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {features.map((f, i) => (
-                            <div
+                            <motion.div
                                 key={f.title}
-                                className="card p-5 animate-fade-in"
-                                style={{
-                                    animationDelay: `${i * 0.06}s`,
-                                }}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                transition={{ delay: i * 0.1, duration: 0.5 }}
+                                className="card p-5"
                             >
                                 <div
                                     className="w-9 h-9 rounded-lg flex items-center justify-center text-lg mb-3"
@@ -218,7 +261,7 @@ export default function Landing() {
                                 </div>
                                 <h3 className="font-semibold text-sm mb-1.5" style={{ color: "var(--text-primary)" }}>{f.title}</h3>
                                 <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>{f.text}</p>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
@@ -227,11 +270,15 @@ export default function Landing() {
             {/* ── CTA ── */}
             <section
                 className="relative py-24 px-6 sm:px-12 overflow-hidden"
-                style={{
-                    background: ctaGradient,
-                }}
+                style={{ background: ctaGradient }}
             >
-                <div className="relative z-10 mx-auto max-w-2xl text-center">
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6 }}
+                    className="relative z-10 mx-auto max-w-2xl text-center"
+                >
                     <h2 className="text-2xl sm:text-3xl font-bold mb-3" style={{ color: "var(--text-primary)", letterSpacing: "-0.015em" }}>
                         Start your job search today
                     </h2>
@@ -248,7 +295,7 @@ export default function Landing() {
                             <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
                     </Link>
-                </div>
+                </motion.div>
             </section>
 
             {/* Footer */}

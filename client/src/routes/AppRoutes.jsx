@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import Landing from "../pages/Landing";
 import Dashboard from "../pages/Dashboard";
 import Jobs from "../pages/Jobs";
+import JobDetails from "../pages/JobDetails";
 import SavedJobs from "../pages/SavedJobs";
 import Applications from "../pages/Applications";
 import Resume from "../pages/Resume";
@@ -20,6 +21,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 const protectedRoutes = [
     { path: "/dashboard", element: <Dashboard /> },
     { path: "/jobs", element: <Jobs /> },
+    { path: "/jobs/:id", element: <JobDetails /> },
     { path: "/saved-jobs", element: <SavedJobs /> },
     { path: "/applications", element: <Applications /> },
     { path: "/resume", element: <Resume /> },

@@ -3,6 +3,9 @@ import api from "./api";
 export const getAggregatedJobs = (params = {}) =>
     api.get("/jobs/aggregate", { params });
 
+export const getAggregatedJobById = (id) =>
+    api.get(`/jobs/aggregate/${id}`);
+
 export const getSavedJobs = () =>
     api.get("/saved-jobs");
 
