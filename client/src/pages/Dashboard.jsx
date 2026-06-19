@@ -8,6 +8,7 @@ import {
 import { getErrorMessage } from "../services/api";
 import { getApplications } from "../services/applicationService";
 import { getAggregatedJobs, getSavedJobs } from "../services/jobService";
+import { getRecommendedJobs } from "../services/resumeService";
 import { useTheme } from "../context/ThemeContext";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
@@ -410,9 +411,9 @@ export default function Dashboard() {
                 setError("");
 
                 const [jobsRes, savedRes, appRes] = await Promise.all([
-                    getAggregatedJobs({ page: 1, limit: 6 }),
-                    getSavedJobs(),
-                    getApplications(),
+                    getRecommendedJobs().catch(() => ({ data: { jobs: [] } })),
+                    getSavedJobs().catch(() => ({ data: [] })),
+                    getApplications().catch(() => ({ data: [] })),
                 ]);
 
                 if (!isMounted) return;
@@ -701,13 +702,13 @@ export default function Dashboard() {
                             className="text-xl font-semibold"
                             style={{ color: "var(--text-primary)" }}
                         >
-                            Latest Jobs
+                            Recommended For You
                         </h2>
                         <Link
-                            to="/jobs"
+                            to="/ai-match"
                             className="text-sm font-medium"
                             style={{ color: "#2563eb" }}
-                            aria-label="View all jobs"
+                            aria-label="View all recommended jobs"
                         >
                             View all
                         </Link>
