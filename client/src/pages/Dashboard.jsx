@@ -10,6 +10,8 @@ import { getApplications } from "../services/applicationService";
 import { getAggregatedJobs, getSavedJobs } from "../services/jobService";
 import { getRecommendedJobs } from "../services/resumeService";
 import { useTheme } from "../context/ThemeContext";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -154,6 +156,19 @@ const StatCard = ({ title, value, icon, color, trend, loading }) => (
 // JOB LISTING SECTION (Memoized)
 // ============================================
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.08 }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
+
 const JobsList = ({ jobs, loading }) => {
     if (loading) {
         return (
@@ -173,42 +188,55 @@ const JobsList = ({ jobs, loading }) => {
         );
     }
 
+    const decodeHtml = (html) => {
+        const txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    };
+
     return (
-        <div className="space-y-1" role="list">
+        <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="space-y-1" 
+            role="list"
+        >
             {jobs.map((job) => (
-                <Link
-                    key={job._id || job.applyUrl}
-                    to={`/jobs/${job._id}`}
-                    className="flex items-center gap-4 py-3.5 px-3 rounded-xl hover:bg-[var(--bg-hover)] transition-colors group"
-                    style={{ borderBottom: "1px solid var(--border)" }}
-                    role="listitem"
-                >
-                    <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                        style={{ background: "#2563eb" }}
-                        aria-hidden="true"
+                <motion.div key={job._id || job.applyUrl} variants={itemVariants}>
+                    <Link
+                        to={`/jobs/${job._id}`}
+                        className="flex items-center gap-4 py-3.5 px-3 rounded-xl hover:bg-[var(--bg-hover)] transition-colors group"
+                        style={{ borderBottom: "1px solid var(--border)" }}
+                        role="listitem"
                     >
-                        {(job.company || "?").charAt(0).toUpperCase()}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium truncate group-hover:underline" style={{ color: "var(--text-primary)" }}>
-                            {decodeHtml(job.title || "Untitled")}
-                        </p>
-                        <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>
-                            {job.company || "Unknown"}
-                        </p>
-                    </div>
-                    {job.source && (
-                        <span
-                            className={`ml-auto badge source-${job.source.toLowerCase().replace(/\s/g, "")}`}
-                            aria-label={`Source: ${job.source}`}
+                        <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+                            style={{ background: "var(--primary)" }}
+                            aria-hidden="true"
                         >
-                            {job.source}
-                        </span>
-                    )}
-                </Link>
+                            {(job.company || "?").charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate group-hover:underline" style={{ color: "var(--text-primary)" }}>
+                                {decodeHtml(job.title || "Untitled")}
+                            </p>
+                            <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>
+                                {job.company || "Unknown"}
+                            </p>
+                        </div>
+                        {job.source && (
+                            <span
+                                className={`ml-auto badge source-${job.source.toLowerCase().replace(/\s/g, "")}`}
+                                aria-label={`Source: ${job.source}`}
+                            >
+                                {job.source}
+                            </span>
+                        )}
+                    </Link>
+                </motion.div>
             ))}
-        </div>
+        </motion.div>
     );
 };
 
@@ -689,11 +717,18 @@ export default function Dashboard() {
             )}
 
             {/* Stat Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8"
+            >
                 {statCards.map((card) => (
-                    <StatCard key={card.title} {...card} loading={loading} />
+                    <motion.div key={card.title} variants={itemVariants}>
+                        <StatCard {...card} loading={loading} />
+                    </motion.div>
                 ))}
-            </div>
+            </motion.div>
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">

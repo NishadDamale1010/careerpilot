@@ -1,8 +1,9 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import heroDashboard from "../assets/landing-dashboard.png";
 import { getErrorMessage } from "../services/api";
 import { registerUser } from "../services/authService";
+import toast from "react-hot-toast";
 
 function Register() {
     const navigate = useNavigate();
@@ -12,8 +13,6 @@ function Register() {
         email: "",
         password: "",
     });
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleChange = (event) => {
@@ -25,23 +24,16 @@ function Register() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError("");
-        setSuccess("");
         setLoading(true);
 
         try {
             await registerUser(formData);
-            setSuccess("Registration successful. Redirecting...");
+            toast.success("Registration successful. Redirecting...");
             window.setTimeout(() => {
                 navigate("/login", { replace: true });
             }, 600);
         } catch (requestError) {
-            setError(
-                getErrorMessage(
-                    requestError,
-                    "Registration failed"
-                )
-            );
+            toast.error(getErrorMessage(requestError, "Registration failed"));
         } finally {
             setLoading(false);
         }
@@ -56,36 +48,24 @@ function Register() {
         >
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+                className="w-full max-w-md rounded-2xl border border-[var(--border)] glass-card p-8 shadow-lg"
             >
                 <Link
                     to="/"
-                    className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                    className="text-sm font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)]"
                 >
                     CareerPilot
                 </Link>
 
-                <h1 className="mt-4 text-3xl font-bold text-slate-950">
+                <h1 className="mt-4 text-3xl font-black tracking-tight text-[var(--text-primary)]">
                     Create Account
                 </h1>
 
-                <p className="mt-2 text-sm text-slate-500">
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">
                     Set up your CareerPilot workspace.
                 </p>
 
-                {error && (
-                    <div className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-                        {error}
-                    </div>
-                )}
-
-                {success && (
-                    <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-                        {success}
-                    </div>
-                )}
-
-                <label className="mt-6 block text-sm font-medium text-slate-700">
+                <label className="mt-6 block text-sm font-semibold text-[var(--text-primary)]">
                     Name
                     <input
                         type="text"

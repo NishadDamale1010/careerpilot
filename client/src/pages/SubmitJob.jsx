@@ -1,35 +1,37 @@
 import { useState } from "react";
 import api, { getErrorMessage } from "../services/api";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function SubmitJob() {
     const [jobLink, setJobLink] = useState("");
     const [companyName, setCompanyName] = useState("");
     const [notes, setNotes] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError("");
-        setSuccess(false);
 
         try {
             await api.post("/jobs/submit", { jobLink, companyName, notes });
-            setSuccess(true);
+            toast.success("Opportunity submitted! Pending verification.");
             setJobLink("");
             setCompanyName("");
             setNotes("");
         } catch (err) {
-            setError(getErrorMessage(err, "Failed to submit job."));
+            toast.error(getErrorMessage(err, "Failed to submit job."));
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="max-w-2xl mx-auto py-8">
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl mx-auto py-8"
+        >
             <div className="mb-8">
                 <h1 className="text-3xl font-black text-[var(--text-primary)] mb-2 tracking-tight">
                     Submit an Opportunity
@@ -39,20 +41,7 @@ export default function SubmitJob() {
                 </p>
             </div>
 
-            <div className="card p-6">
-                {success && (
-                    <div className="mb-6 p-4 rounded-lg badge-green border border-green-200">
-                        <p className="font-semibold">Thank you for contributing!</p>
-                        <p className="text-sm mt-1">Your submission has been sent for verification.</p>
-                    </div>
-                )}
-
-                {error && (
-                    <div className="mb-6 p-4 rounded-lg badge-red border border-red-200">
-                        {error}
-                    </div>
-                )}
-
+            <div className="glass-card p-6 border border-[var(--primary-light)]">
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
                         <label className="block text-sm font-semibold text-[var(--text-primary)] mb-1">

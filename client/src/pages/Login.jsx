@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import heroDashboard from "../assets/landing-dashboard.png";
 import { getErrorMessage } from "../services/api";
 import { loginUser } from "../services/authService";
+import toast from "react-hot-toast";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -10,21 +11,20 @@ export default function Login() {
     const redirectTo = location.state?.from?.pathname || "/dashboard";
 
     const [formData, setFormData] = useState({ email: "", password: "" });
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
         setLoading(true);
         try {
             const { data } = await loginUser(formData);
             localStorage.setItem("token", data.token);
+            toast.success("Welcome back!");
             navigate(redirectTo, { replace: true });
         } catch (err) {
-            setError(getErrorMessage(err, "Login failed. Check your credentials."));
+            toast.error(getErrorMessage(err, "Login failed. Check your credentials."));
         } finally {
             setLoading(false);
         }
@@ -39,24 +39,18 @@ export default function Login() {
         >
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+                className="w-full max-w-md rounded-2xl border border-[var(--border)] glass-card p-8 shadow-lg"
             >
-                <Link to="/" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+                <Link to="/" className="text-sm font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)]">
                     CareerPilot
                 </Link>
 
-                <h1 className="mt-4 text-3xl font-bold text-slate-950">Welcome back</h1>
-                <p className="mt-2 text-sm text-slate-500">
+                <h1 className="mt-4 text-3xl font-black tracking-tight text-[var(--text-primary)]">Welcome back</h1>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">
                     Sign in to continue tracking jobs and applications.
                 </p>
 
-                {error && (
-                    <div className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-                        {error}
-                    </div>
-                )}
-
-                <label className="mt-6 block text-sm font-medium text-slate-700">
+                <label className="mt-6 block text-sm font-semibold text-[var(--text-primary)]">
                     Email
                     <input
                         id="login-email"

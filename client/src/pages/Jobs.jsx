@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getErrorMessage } from "../services/api";
 import { getAggregatedJobs } from "../services/jobService";
 import JobCard from "../components/JobCard";
+import { motion, AnimatePresence } from "framer-motion";
 
 const SOURCES = ["All", "remoteok", "wellfound", "remotive", "themuse", "jsearch", "internshala"];
 const TYPES = ["All", "Remote", "Full-time", "Part-time", "Internship", "Contract"];
@@ -231,24 +232,41 @@ export default function Jobs() {
             )}
 
             {/* Jobs Grid */}
-            <div className="grid gap-8 lg:grid-cols-2 mb-8">
-                {loading
-                    ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
-                    : jobs.length === 0
-                        ? (
-                            <div className="col-span-2 text-center py-16" style={{ color: "var(--text-muted)" }}>
-                                <div className="text-4xl mb-3">🔍</div>
-                                <p className="font-semibold">No jobs found.</p>
-                                <p className="text-sm mt-1">Try a different search or clear your filters.</p>
-                            </div>
-                        )
-                        : jobs.map((job) => (
-                            <JobCard
-                                key={job._id || job.applyUrl || `${job.title}-${job.company}`}
-                                job={job}
-                            />
-                        ))}
-            </div>
+            <motion.div 
+                className="grid gap-8 lg:grid-cols-2 mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ staggerChildren: 0.08 }}
+            >
+                <AnimatePresence mode="popLayout">
+                    {loading
+                        ? Array.from({ length: 12 }).map((_, i) => (
+                              <motion.div key={`skeleton-${i}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}>
+                                  <SkeletonCard />
+                              </motion.div>
+                          ))
+                        : jobs.length === 0
+                            ? (
+                                <motion.div key="empty" className="col-span-2 text-center py-16" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: "var(--text-muted)" }}>
+                                    <div className="text-4xl mb-3">🔍</div>
+                                    <p className="font-semibold">No jobs found.</p>
+                                    <p className="text-sm mt-1">Try a different search or clear your filters.</p>
+                                </motion.div>
+                            )
+                            : jobs.map((job) => (
+                                <motion.div 
+                                    key={job._id || job.applyUrl || `${job.title}-${job.company}`}
+                                    layout
+                                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
+                                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                                >
+                                    <JobCard job={job} />
+                                </motion.div>
+                            ))}
+                </AnimatePresence>
+            </motion.div>
 
             {/* Pagination */}
             {!loading && meta.totalPages > 1 && (
